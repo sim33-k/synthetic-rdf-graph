@@ -102,11 +102,16 @@ def generate_rmat_knows_edges(
     knows_edges = _extract_undirected_edges(rmat_graph)
 
     if len(knows_edges) < target_edges:
+        #go through every (u, v) pairs
         possible_edges = [(u, v) for u in range(n_people) for v in range(u + 1, n_people)]
+        #identify the edges that are not in target_edges
         missing = [edge for edge in possible_edges if edge not in knows_edges]
+        #randmize the missing edges list
         random.shuffle(missing)
+        #append the required amount of (u, v) pairs to the knows_edges to satisfy the target_edge requirement
         knows_edges.update(missing[:target_edges - len(knows_edges)])
 
+    #
     if len(knows_edges) > target_edges:
         knows_edges = set(random.sample(list(knows_edges), target_edges))
 
@@ -158,6 +163,8 @@ def generate_rdf(
     )
 
     if should_generate_projects:
+        #n_projects is the requested amount of projects. However, if the user has not mentioned the project names
+        #explictly in the CLI, it would generate int valued project URIs for projects.
         if n_projects is not None and n_projects > 0:
             project_ids = [str(i) for i in range(n_projects)]
         elif "currentProject" in unidirectional_connections_dict:
